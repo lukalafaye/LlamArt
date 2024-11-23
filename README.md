@@ -1,7 +1,8 @@
 # LlamArt
 
-# iOS App
+Llam4rt recognizes artworks using the video feed. Once the user has selected something they would like to talk about, the image's extremely detailed description and data get fed into the LLM using Retrieval-Augmented Generation (RAG), allowing the user to chat about information revolving around the artwork.
 
+# iOS App
 
 Made with love by Martin Mohammed
 https://github.com/MartinMohammed
@@ -20,3 +21,4 @@ https://github.com/MartinMohammed
 
 # LLM running on device
 
+Llam4rt recognizes artworks using the video feed. Once the user has selected something they would like to talk about, the image's extremely detailed description and data get fed into the LLM using Retrieval-Augmented Generation (RAG), allowing the user to chat about information revolving around the artwork.
