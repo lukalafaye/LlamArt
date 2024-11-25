@@ -67,12 +67,14 @@ struct ContentView: View {
   @StateObject private var resourceManager = ResourceManager()
   @StateObject private var resourceMonitor = ResourceMonitor()
   @StateObject private var logManager = LogManager()
+  @StateObject private var memoryManager = MemoryManager()
 
   @State private var isImagePickerPresented = false
   @State private var selectedImage: UIImage?
   @State private var imagePickerSourceType: UIImagePickerController.SourceType = .photoLibrary
 
   @State private var showingSettings = false
+  @State private var csvData = readCSV(filePath: Bundle.main.path(forResource: "dataset", ofType: "csv")!)
 
   enum PickerType {
     case model
@@ -261,6 +263,22 @@ struct ContentView: View {
     messages.append(Message(text: text))
     messages.append(Message(type: useLlama ? .llamagenerated : .llavagenerated))
 
+    // Fetch memory and add it to the prompt if available
+      let memoryContext = memoryManager.getMemory().map { "Q - \($0.key)\nR - \($0.value)\n" }.joined(separator: "\n")
+    let ragContext = createRAGInput(forString: text + memoryContext, csvEntries: csvData)
+    let finalPrompt = """
+        Context:
+        You are a helpful AI art assistant, called Llam4rt, the user will ask you questions about paintings.
+        \(ragContext)
+        
+        User Input:
+        \(text)
+        
+        Current Conversation:
+        \(memoryContext)
+        """
+    print(finalPrompt)
+
     runnerQueue.async {
       defer {
         DispatchQueue.main.async {
@@ -346,15 +364,17 @@ struct ContentView: View {
         }
         return
       }
+    var latestMsg: String = ""
       do {
         var tokens: [String] = []
+        
         var rgbArray: [UInt8]?
         let MAX_WIDTH = 336.0
         var newHeight = 0.0
         var imageBuffer: UnsafeMutableRawPointer?
 
         if let img = selectedImage {
-          let llava_prompt = "\(text) ASSISTANT"
+          let llava_prompt = "\(finalPrompt) ASSISTANT"
 
           newHeight = MAX_WIDTH * img.size.height / img.size.width
           let resizedImage = img.resized(to: CGSize(width: MAX_WIDTH, height: newHeight))
@@ -376,6 +396,7 @@ struct ContentView: View {
                   DispatchQueue.main.async {
                     var message = messages.removeLast()
                     message.text += text
+                    latestMsg = message.text
                     message.tokenCount += count
                     message.dateUpdated = Date()
                     messages.append(message)
@@ -388,7 +409,7 @@ struct ContentView: View {
             }
           }
         } else {
-          let llama3_prompt = "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\(text)<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+          let llama3_prompt = "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\(finalPrompt)<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
 
           try runnerHolder.runner?.generate(llama3_prompt, sequenceLength: seq_len) { token in
 
@@ -407,6 +428,7 @@ struct ContentView: View {
                   DispatchQueue.main.async {
                     var message = messages.removeLast()
                     message.text += text
+                    latestMsg = message.text
                     message.tokenCount += count
                     message.dateUpdated = Date()
                     messages.append(message)
@@ -418,6 +440,11 @@ struct ContentView: View {
               }
             }
           }
+        }
+        
+        // Add prompt and response to memory
+        DispatchQueue.main.async {
+          memoryManager.addToMemory(prompt: text, response: latestMsg)
         }
       } catch {
         DispatchQueue.main.async {

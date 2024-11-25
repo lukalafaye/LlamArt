@@ -14,14 +14,14 @@ struct MessageView: View {
   var body: some View {
     VStack(alignment: .center) {
       if message.type == .info {
-        Text(message.text)
+          Text(.init(message.text))
           .font(.caption)
           .foregroundColor(.secondary)
           .padding([.leading, .trailing], 10)
       } else {
         VStack(alignment: message.type == .llamagenerated || message.type == .llavagenerated ? .leading : .trailing) {
           if message.type == .llamagenerated || message.type == .llavagenerated || message.type == .prompted {
-            Text(message.type == .llamagenerated ? "Llama" : (message.type == .llavagenerated ? "Llava" : "Prompt"))
+              Text(.init(message.type == .llamagenerated ? "Llama" : (message.type == .llavagenerated ? "Llava" : "Prompt")))
               .font(.caption)
               .foregroundColor(.secondary)
               .padding(message.type == .llamagenerated || message.type == .llavagenerated ? .trailing : .leading, 20)
@@ -43,7 +43,7 @@ struct MessageView: View {
                   .progressViewStyle(CircularProgressViewStyle())
               }
             } else {
-              Text(message.text)
+                Text(.init(message.text))
                 .padding(10)
                 .foregroundColor(message.type == .llamagenerated || message.type == .llavagenerated ? .primary : .white)
                 .background(message.type == .llamagenerated || message.type == .llavagenerated ? Color(UIColor.secondarySystemBackground) : Color.blue)

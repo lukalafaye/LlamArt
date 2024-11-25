@@ -27,7 +27,7 @@ class ET_EXPERIMENTAL LlavaRunner
   explicit LlavaRunner(
       const std::string& model_path,
       const std::string& tokenizer_path,
-      const float temperature = 0.1f)
+      const float temperature = 0.8f)
       : MultimodalRunner(model_path, tokenizer_path, temperature){};
   bool is_loaded();
   ::executorch::runtime::Error load();

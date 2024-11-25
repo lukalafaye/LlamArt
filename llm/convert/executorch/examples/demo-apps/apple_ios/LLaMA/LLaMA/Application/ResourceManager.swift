@@ -31,7 +31,6 @@ final class ResourceManager: ObservableObject {
 
   func createDirectoriesIfNeeded() throws {
     guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-      print(documentsDirectory.absoluteString)
     try fileManager.createDirectory(at: documentsDirectory.appendingPathComponent("models"), withIntermediateDirectories: true, attributes: nil)
     try fileManager.createDirectory(at: documentsDirectory.appendingPathComponent("tokenizers"), withIntermediateDirectories: true, attributes: nil)
   }

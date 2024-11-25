@@ -75,6 +75,7 @@ cc_library(
         "//absl/base:config",
         "//absl/base:core_headers",
         "//absl/meta:type_traits",
+        "//absl/numeric:bits",
         "//absl/random/internal:distribution_caller",
         "//absl/random/internal:fast_uniform_bits",
         "//absl/random/internal:fastmath",
@@ -123,7 +124,6 @@ cc_library(
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         ":random",
-        "//absl/base:config",
         "//absl/base:core_headers",
         "//absl/base:fast_type_id",
         "//absl/meta:type_traits",
@@ -156,6 +156,7 @@ cc_library(
     deps = [
         ":random",
         "//absl/base:config",
+        "//absl/base:core_headers",
         "//absl/base:fast_type_id",
         "//absl/container:flat_hash_map",
         "//absl/meta:type_traits",
@@ -473,7 +474,6 @@ cc_test(
 cc_test(
     name = "mock_distributions_test",
     size = "small",
-    timeout = "moderate",
     srcs = ["mock_distributions_test.cc"],
     copts = ABSL_TEST_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,

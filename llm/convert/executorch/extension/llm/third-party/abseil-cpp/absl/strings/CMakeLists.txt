@@ -42,6 +42,7 @@ absl_cc_library(
     "has_absl_stringify.h"
     "internal/damerau_levenshtein_distance.h"
     "internal/string_constant.h"
+    "internal/has_absl_stringify.h"
     "match.h"
     "numbers.h"
     "str_cat.h"
@@ -100,7 +101,7 @@ absl_cc_library(
   COPTS
     ${ABSL_DEFAULT_COPTS}
   DEPS
-    absl::config
+    absl::core_headers
     absl::string_view
   PUBLIC
 )

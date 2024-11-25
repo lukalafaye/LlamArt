@@ -95,18 +95,6 @@ absl_cc_test(
     GTest::gtest_main
 )
 
-absl_cc_test(
-  NAME
-    nullability_default_nonnull_test
-  SRCS
-    "nullability_default_nonnull_test.cc"
-  COPTS
-    ${ABSL_TEST_COPTS}
-  DEPS
-    absl::nullability
-    GTest::gtest_main
-)
-
 # Internal-only target, do not depend on directly.
 absl_cc_library(
   NAME
@@ -546,7 +534,6 @@ absl_cc_test(
     absl::no_destructor
     absl::config
     absl::raw_logging_internal
-    GTest::gmock
     GTest::gtest_main
 )
 
@@ -780,44 +767,5 @@ absl_cc_test(
   DEPS
     absl::config
     absl::poison
-    GTest::gtest_main
-)
-
-absl_cc_library(
-  NAME
-    tracing_internal
-  HDRS
-    "internal/tracing.h"
-  SRCS
-    "internal/tracing.cc"
-  COPTS
-    ${ABSL_DEFAULT_COPTS}
-  DEPS
-    absl::base
-)
-
-absl_cc_test(
-  NAME
-    tracing_internal_weak_test
-  SRCS
-    "internal/tracing_weak_test.cc"
-  COPTS
-    ${ABSL_TEST_COPTS}
-  DEPS
-    absl::base
-    absl::tracing_internal
-    GTest::gtest_main
-)
-
-absl_cc_test(
-  NAME
-    tracing_internal_strong_test
-  SRCS
-    "internal/tracing_strong_test.cc"
-  COPTS
-    ${ABSL_TEST_COPTS}
-  DEPS
-    absl::base
-    absl::tracing_internal
     GTest::gtest_main
 )

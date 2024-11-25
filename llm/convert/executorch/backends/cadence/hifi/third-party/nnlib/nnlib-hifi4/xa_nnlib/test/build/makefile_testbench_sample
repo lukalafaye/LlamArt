@@ -1,0 +1,293 @@
+#
+# Copyright (c) 2018-2024 Cadence Design Systems, Inc.
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to use this Software with Cadence processor cores only and
+# not with any other processors and platforms, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
+
+.PHONY: all run
+
+ROOTDIR = ../..
+
+QUIET =
+WARNING_AS_ERROR ?= 1
+include detect_core.mk
+
+ifeq ($(CPU), x86)
+
+  CC = gcc
+  MKPATH = mkdir -p
+  RM = rm -f
+  RM_R = rm -rf
+  LDFLAGS =
+  CPU_PREFIX = xgcc
+
+  CFLAGS = -I$(ROOTDIR)/include $(EXTRA_CFLAGS)
+
+else
+
+  # CC = xt-xcc $(XTCORE)
+  # CXX = xt-xc++ $(XTCORE)
+  CC = xt-clang $(XTCORE)
+  CXX = xt-clang++ $(XTCORE)
+  ISS = xt-run $(XTCORE)
+  CONFIGDIR := $(shell $(ISS) --show-config=config)
+  include $(CONFIGDIR)/misc/hostenv.mk
+  CPU_PREFIX = xa
+
+  CFLAGS = -Wall -fsigned-char -mlongcalls -D__PROFILE__ -I$(ROOTDIR)/include $(EXTRA_CFLAGS)
+  ifeq ($(WARNING_AS_ERROR),0)
+  CFLAGS += -Werror 
+  endif
+  CFLAGS += -mtext-section-literals 
+  LDFLAGS = -Wl,--gc-sections
+  LDFLAGS += -mlongcalls -lm
+  CXX_LDFLAGS += -std=c++11
+
+endif
+
+CFLAGS += -Dhifi4
+
+CFLAGS += \
+    -DMODEL_INT16 \
+    -DVERIFY \
+    -DNNLIB_V2\
+    -DPROFILE \
+    -DHIFI_NNLIB_OPT
+
+AOSP_SRC_DIR = test/android_nn/android_deps
+
+CFLAGS += \
+    -DNNTEST_ONLY_PUBLIC_API  \
+    -D__ANDROID_API__=28 \
+    -DHIFI_BUILD \
+    -fpermissive \
+    -DTF_LITE_STATIC_MEMORY \
+    -DTF_LITE_DISABLE_X86_NEON
+
+CPPFLAGS += \
+     -std=c++11
+
+INCLUDES = \
+    -I$(ROOTDIR)/test/include \
+    -I$(ROOTDIR)/include \
+    -I$(ROOTDIR)/include/nnlib \
+
+INCLUDES_ANN = \
+    -I$(ROOTDIR)/test/android_nn/include \
+    -I$(ROOTDIR)/test/android_nn/common/include \
+    -I$(ROOTDIR)/test/android_nn/runtime/include \
+    -I$(ROOTDIR)/test/android_nn/tools/test_generator/include \
+    -I$(ROOTDIR)/$(AOSP_SRC_DIR) \
+    -I$(ROOTDIR)/$(AOSP_SRC_DIR)/android/system/core/base/include \
+    -I$(ROOTDIR)/$(AOSP_SRC_DIR)/android/system/libhidl/base/include \
+    -I$(ROOTDIR)/test/android_nn/runtime/test \
+
+ifeq ($(DEBUG),1)
+  OPT_O2 = -O0 -g
+  OPT_O0 = -O0 -g
+else
+  OPT_O2 = -O2
+  OPT_O0 = -O0
+endif
+
+vpath %.c $(ROOTDIR)/test/src
+vpath %.cpp $(ROOTDIR)/test/android_nn/common
+vpath %.cpp $(ROOTDIR)/test/android_nn/runtime
+vpath %.cpp $(ROOTDIR)/test/android_nn/runtime/test
+vpath %.cpp $(ROOTDIR)/$(AOSP_SRC_DIR)/android/system/libhidl/base
+vpath %.cpp $(ROOTDIR)/$(AOSP_SRC_DIR)/cutils
+
+NNLIB     = $(ROOTDIR)/lib/$(CPU_PREFIX)_nnlib$(DETECTED_CORE).a
+ANNLIB    = $(ROOTDIR)/lib/$(CPU_PREFIX)_annlib$(DETECTED_CORE).a
+
+MATMULBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_matXvec_test
+CONVBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_conv_test
+POOLBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_pool_test
+ACTBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_activation_test
+GRUBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_gru_test
+LSTMBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_lstm_test
+CNNBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_cnn_test
+BASICBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_basic_test
+NORMBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_norm_test
+REORGBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_reorg_test
+ANNBIN = $(CPU_PREFIX)$(DETECTED_CORE)_nn_ann_test
+
+ifeq ($(DETECTED_CORE),)
+OBJDIR = objs
+else
+OBJDIR = objs$(S)$(DETECTED_CORE)
+endif
+
+MATMULOBJS = \
+    xa_nn_matXvec_testbench.o 
+CONVOBJS = \
+    xa_nn_conv_testbench.o 
+POOLOBJS = \
+    xa_nn_pool_testbench.o 
+ACTOBJS = \
+    xa_nn_activations_testbench.o
+GRUOBJS = \
+    xa_nn_gru_testbench.o 
+LSTMOBJS = \
+    xa_nn_lstm_testbench.o 
+CNNOBJS = \
+    xa_nn_cnn_testbench.o 
+BASICOBJS = \
+    xa_nn_basic_testbench.o
+NORMOBJS = \
+    xa_nn_norm_testbench.o
+REORGOBJS = \
+    xa_nn_reorg_testbench.o
+
+UTILOBJS = \
+    xt_manage_buffers.o \
+    file_io.o
+
+ANNOBJS = \
+    TestMain.o \
+    Memory.o \
+    Callbacks.o \
+    Utils.o \
+    NeuralNetworks.o \
+    Manager.o \
+    ModelBuilder.o \
+    CompilationBuilder.o \
+    ExecutionPlan.o \
+    ExecutionBuilder.o \
+    ValidateHal.o \
+    CpuExecutor.o \
+    HidlSupport.o \
+    native_handle.o \
+
+
+OBJS_MATMULOBJS  = $(addprefix $(OBJDIR)/,$(MATMULOBJS))
+OBJS_CONVOBJS  = $(addprefix $(OBJDIR)/,$(CONVOBJS))
+OBJS_POOLOBJS  = $(addprefix $(OBJDIR)/,$(POOLOBJS))
+OBJS_ACTOBJS  = $(addprefix $(OBJDIR)/,$(ACTOBJS))
+OBJS_GRUOBJS  = $(addprefix $(OBJDIR)/,$(GRUOBJS))
+OBJS_LSTMOBJS  = $(addprefix $(OBJDIR)/,$(LSTMOBJS))
+OBJS_UTILOBJS = $(addprefix $(OBJDIR)/,$(UTILOBJS))
+OBJS_CNNOBJS  = $(addprefix $(OBJDIR)/,$(CNNOBJS))
+OBJS_BASICOBJS  = $(addprefix $(OBJDIR)/,$(BASICOBJS))
+OBJS_NORMOBJS  = $(addprefix $(OBJDIR)/,$(NORMOBJS))
+OBJS_REORGOBJS  = $(addprefix $(OBJDIR)/,$(REORGOBJS))
+OBJS_ANNOBJS  = $(addprefix $(OBJDIR)/,$(ANNOBJS))
+
+ifeq ($(hifi1), 1)
+all: $(MATMULBIN) $(CONVBIN) $(POOLBIN) $(ACTBIN) $(GRUBIN) $(LSTMBIN) $(CNNBIN) $(BASICBIN) $(NORMBIN) $(REORGBIN)
+
+run: $(MATMULBIN) $(CONVBIN) $(POOLBIN) $(ACTBIN) $(GRUBIN) $(LSTMBIN) $(CNNBIN) $(BASICBIN) $(NORMBIN) $(REORGBIN)
+	xt-run --mem_model --nosummary xa_nn_matXvec_test
+	xt-run --mem_model --nosummary xa_nn_activation_test
+	xt-run --mem_model --nosummary xa_nn_conv_test
+	xt-run --mem_model --nosummary xa_nn_pool_test
+	xt-run --mem_model --nosummary xa_nn_gru_test
+	xt-run --mem_model --nosummary xa_nn_lstm_test
+	xt-run --mem_model --nosummary xa_nn_cnn_test
+	xt-run --mem_model --nosummary xa_nn_basic_test
+	xt-run --mem_model --nosummary xa_nn_norm_test
+	xt-run --mem_model --nosummary xa_nn_reorg_test
+clean:
+	-$(RM) $(MATMULBIN) $(CONVBIN) $(POOLBIN) $(ACTBIN) $(GRUBIN) $(LSTMBIN) $(CNNBIN) $(BASICBIN) $(NORMBIN) $(REORGBIN)
+	-$(RM) $(OBJDIR)$(S)*.o
+else
+all: $(MATMULBIN) $(CONVBIN) $(POOLBIN) $(ACTBIN) $(GRUBIN) $(LSTMBIN) $(CNNBIN) $(BASICBIN) $(NORMBIN) $(REORGBIN) $(ANNBIN)
+
+run: $(MATMULBIN) $(CONVBIN) $(POOLBIN) $(ACTBIN) $(GRUBIN) $(LSTMBIN) $(CNNBIN) $(BASICBIN) $(NORMBIN) $(REORGBIN) $(ANNBIN)
+	xt-run --mem_model --nosummary xa_nn_matXvec_test
+	xt-run --mem_model --nosummary xa_nn_activation_test
+	xt-run --mem_model --nosummary xa_nn_conv_test
+	xt-run --mem_model --nosummary xa_nn_pool_test
+	xt-run --mem_model --nosummary xa_nn_gru_test
+	xt-run --mem_model --nosummary xa_nn_lstm_test
+	xt-run --mem_model --nosummary xa_nn_cnn_test
+	xt-run --mem_model --nosummary xa_nn_basic_test
+	xt-run --mem_model --nosummary xa_nn_norm_test
+	xt-run --mem_model --nosummary xa_nn_reorg_test
+	xt-run --mem_model --nosummary xa_nn_ann_test
+clean:
+	-$(RM) $(MATMULBIN) $(CONVBIN) $(POOLBIN) $(ACTBIN) $(GRUBIN) $(LSTMBIN) $(CNNBIN) $(BASICBIN) $(NORMBIN) $(REORGBIN) $(ANNBIN)
+	-$(RM) $(OBJDIR)$(S)*.o
+endif
+
+
+nn_activation: $(ACTBIN)
+nn_cnn: $(CNNBIN)
+nn_conv: $(CONVBIN)
+nn_gru: $(GRUBIN)
+nn_lstm: $(LSTMBIN)
+nn_matXvec: $(MATMULBIN)
+nn_pool: $(POOLBIN) 
+nn_basic: $(BASICBIN) 
+nn_norm: $(NORMBIN) 
+nn_reorg: $(REORGBIN) 
+nn_ann: $(ANNBIN) 
+
+$(MATMULBIN): $(OBJDIR) $(OBJS_MATMULOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_MATMULOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(CONVBIN): $(OBJDIR) $(OBJS_CONVOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_CONVOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(POOLBIN): $(OBJDIR) $(OBJS_POOLOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_POOLOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(ACTBIN): $(OBJDIR) $(OBJS_ACTOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_ACTOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(GRUBIN): $(OBJDIR) $(OBJS_GRUOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_GRUOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(LSTMBIN): $(OBJDIR) $(OBJS_LSTMOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_LSTMOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(CNNBIN): $(OBJDIR) $(OBJS_CNNOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_CNNOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(BASICBIN): $(OBJDIR) $(OBJS_BASICOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_BASICOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(NORMBIN): $(OBJDIR) $(OBJS_NORMOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_NORMOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+$(REORGBIN): $(OBJDIR) $(OBJS_REORGOBJS) $(OBJS_UTILOBJS) $(NNLIB)
+	$(CC) -o $@ $(OBJS_REORGOBJS) $(OBJS_UTILOBJS) $(NNLIB) $(LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+ifneq ($(hifi1), 1)
+ifeq ($(xclib), 1)
+$(ANNBIN): $(OBJDIR) $(OBJS_ANNOBJS) $(ANNLIB) $(NNLIB)
+	$(CXX) -o $@ $(OBJS_ANNOBJS) $(ANNLIB) $(NNLIB) $(LDFLAGS) $(CXX_LDFLAGS) $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
+
+else
+$(ANNBIN) $(TFULITEBIN):
+	@echo "$@ not supported with newlib"
+
+endif
+endif
+
+$(OBJDIR):
+	-$(MKPATH) $(OBJDIR)
+
+$(OBJS_MATMULOBJS) $(OBJS_CONVOBJS) $(OBJS_POOLOBJS) $(OBJS_UTILOBJS) $(OBJS_ACTOBJS) $(OBJS_GRUOBJS) $(OBJS_LSTMOBJS) $(OBJS_CNNOBJS) $(OBJS_BASICOBJS) $(OBJS_NORMOBJS) $(OBJS_REORGOBJS): $(OBJDIR)/%.o: %.c
+	@echo "Compiling $<"
+	$(QUIET) $(CC) $(OPT_O2) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+
+$(OBJS_ANNOBJS): $(OBJDIR)/%.o: %.cpp
+	@echo "Compiling $<"
+	$(QUIET) $(CXX) $(OPT_O0) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $(INCLUDES_ANN) -o $@ -c $<

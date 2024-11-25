@@ -1,0 +1,43 @@
+# Copyright (c) 2023, ARM Limited.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+
+#
+# Description:
+# Packaging for the TOSA serialization lib
+#
+
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "setuptools_scm[toml]>=6.0"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name="tosa_serialization_lib"
+description="TOSA serialization library"
+authors=[ { "name" = "Arm Ltd" } ]
+license={ "file" = "LICENSE.txt" }
+dynamic = ["version"]
+
+[tool.setuptools]
+packages = [ "tosa", "serializer" ]
+
+[tool.setuptools.package-dir]
+tosa = "python/tosa"
+serializer = "python/serializer"
+
+[tool.setuptools_scm]
+version_scheme = "no-guess-dev"

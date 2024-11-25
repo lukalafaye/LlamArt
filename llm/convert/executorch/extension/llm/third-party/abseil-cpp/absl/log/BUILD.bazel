@@ -187,7 +187,6 @@ cc_library(
     deps = [
         ":log_sink",
         "//absl/base:config",
-        "//absl/base:nullability",
         "//absl/log/internal:log_sink_set",
     ],
 )
@@ -234,7 +233,6 @@ cc_library(
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         "//absl/base:config",
-        "//absl/base:core_headers",
         "//absl/log/internal:structured",
         "//absl/strings",
     ],
@@ -311,7 +309,6 @@ cc_test(
 cc_test(
     name = "absl_log_basic_test",
     size = "small",
-    timeout = "moderate",
     srcs = ["absl_log_basic_test.cc"],
     copts = ABSL_TEST_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
@@ -427,7 +424,6 @@ cc_test(
 cc_test(
     name = "log_basic_test",
     size = "small",
-    timeout = "moderate",
     srcs = ["log_basic_test.cc"],
     copts = ABSL_TEST_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,

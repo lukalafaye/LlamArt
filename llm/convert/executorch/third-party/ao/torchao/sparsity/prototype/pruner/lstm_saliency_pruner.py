@@ -1,0 +1,1 @@
+from torchao.prototype.sparsity.pruner.lstm_saliency_pruner import LSTMSaliencyPruner

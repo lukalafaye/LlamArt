@@ -1,0 +1,136 @@
+
+// Copyright (c) 2020-2023, ARM Limited.
+//
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//
+//         http://www.apache.org/licenses/LICENSE-2.0
+//
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+
+/*
+  Syntax:
+    DEF_ATTRIBUTE(ATTRIBUTE_NAME, NUM_ARGS_IN_ATTRIBUTES, ARG0_TYPE, ARG0_SCALAR_OR_VECTOR, ARGS0_NAME, ...)
+
+  Description:
+    ATTRIBUTE_NAME: corresponding attribute name, must match corresponding "table XXXAttribute" in tosa.fbs
+    NUM_ARGS_IN_ATTRIBUTES: number of arguments in this attribute
+    ARG0_TYPE: data type of arg0 in attribute
+    ARG0_SCALAR_OR_VECTOR: is arg0 a scalar(S) or a vector(V)
+    ARG0_NAME: name of arg0
+    ...: variadic variables for more arguments, depending on NUM_ARGS_IN_ATTRIBUTES
+*/
+
+DEF_ATTRIBUTE(Pool, 6,
+              int32_t, V, pad,
+              int32_t, V, kernel,
+              int32_t, V, stride,
+              int32_t, S, input_zp,
+              int32_t, S, output_zp,
+              DType,   S, accum_dtype)
+
+DEF_ATTRIBUTE(Conv, 6,
+              int32_t, V, pad,
+              int32_t, V, stride,
+              int32_t, V, dilation,
+              int32_t, S, input_zp,
+              int32_t, S, weight_zp,
+              bool,    S, local_bound)
+
+DEF_ATTRIBUTE(TransposeConv, 6,
+              int32_t, V, out_pad,
+              int32_t, V, stride,
+              int32_t, V, output_shape,
+              int32_t, S, input_zp,
+              int32_t, S, weight_zp,
+              bool,    S, local_bound)
+
+DEF_ATTRIBUTE(Pad, 3,
+              int32_t, V, padding,
+              int32_t, S, pad_const_int,
+              float, S, pad_const_fp)
+
+DEF_ATTRIBUTE(Axis, 1,
+              int32_t, S, axis)
+
+DEF_ATTRIBUTE(Reshape, 1,
+              int32_t, V, new_shape)
+
+DEF_ATTRIBUTE(Slice, 2,
+              int32_t, V, start,
+              int32_t, V, size)
+
+DEF_ATTRIBUTE(Tile, 1,
+              int32_t, V, multiples)
+
+DEF_ATTRIBUTE(Resize, 4,
+              int16_t, V, scale,
+              int16_t, V, offset,
+              int16_t, V, border,
+              ResizeMode, S, mode)
+
+DEF_ATTRIBUTE(Clamp, 4,
+              int32_t, S, min_int,
+              int32_t, S, max_int,
+              float, S, min_fp,
+              float, S, max_fp)
+
+DEF_ATTRIBUTE(Rescale, 9,
+              int32_t, S, input_zp,
+              int32_t, S, output_zp,
+              int32_t, V, multiplier,
+              int32_t, V, shift,
+              bool, S, scale32,
+              bool, S, double_round,
+              bool, S, per_channel,
+              bool, S, input_unsigned,
+              bool, S, output_unsigned)
+
+DEF_ATTRIBUTE(Mul, 1,
+              int32_t, S, shift)
+
+DEF_ATTRIBUTE(ArithmeticRightShift, 1,
+              bool, S, round)
+
+DEF_ATTRIBUTE(CondIf, 2,
+              string, S, then_branch,
+              string, S, else_branch)
+
+DEF_ATTRIBUTE(WhileLoop, 2,
+              string, S, cond_branch,
+              string, S, body_branch)
+
+DEF_ATTRIBUTE(Transpose, 1,
+              int32_t, V, perms)
+
+DEF_ATTRIBUTE(Table, 1,
+              int16_t, V, table)
+
+DEF_ATTRIBUTE(MatMul, 2,
+              int32_t, S, a_zp,
+              int32_t, S, b_zp)
+
+DEF_ATTRIBUTE(FullyConnected, 2,
+              int32_t, S, input_zp,
+              int32_t, S, weight_zp)
+
+DEF_ATTRIBUTE(Negate, 2,
+              int32_t, S, input1_zp,
+              int32_t, S, output_zp)
+
+DEF_ATTRIBUTE(Custom, 3,
+              string, S, operator_name,
+              string, S, domain_name,
+              uint8_t, V, implementation_attrs)
+
+DEF_ATTRIBUTE(FFT, 2,
+              bool, S, inverse,
+              bool, S, local_bound)
+
+DEF_ATTRIBUTE(RFFT, 1,
+              bool, S, local_bound)

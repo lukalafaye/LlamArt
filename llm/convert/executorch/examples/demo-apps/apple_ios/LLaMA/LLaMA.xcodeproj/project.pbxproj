@@ -57,6 +57,9 @@
 		03D03DAC2C7823830088D6A7 /* text_decoder_runner.h in Headers */ = {isa = PBXBuildFile; fileRef = 03D03DAA2C7823830088D6A7 /* text_decoder_runner.h */; };
 		03DDA0FB2BD6368100D234B3 /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 03DDA0FA2BD6368100D234B3 /* base64.h */; };
 		26A6A4282C8A3769005A761E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A6A4272C8A3769005A761E /* ImagePicker.swift */; };
+		E193981B2CF3E5710023EF96 /* CSVReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193981A2CF3E5710023EF96 /* CSVReader.swift */; };
+		E193981D2CF3E5DE0023EF96 /* dataset.csv in Resources */ = {isa = PBXBuildFile; fileRef = E193981C2CF3E5DE0023EF96 /* dataset.csv */; };
+		E193981F2CF3E7B50023EF96 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193981E2CF3E7B10023EF96 /* Memory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +123,9 @@
 		03D03DAA2C7823830088D6A7 /* text_decoder_runner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = text_decoder_runner.h; sourceTree = "<group>"; };
 		03DDA0FA2BD6368100D234B3 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base64.h; path = ../../../../extension/llm/tokenizer/base64.h; sourceTree = "<group>"; };
 		26A6A4272C8A3769005A761E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		E193981A2CF3E5710023EF96 /* CSVReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVReader.swift; sourceTree = "<group>"; };
+		E193981C2CF3E5DE0023EF96 /* dataset.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = dataset.csv; sourceTree = "<group>"; };
+		E193981E2CF3E7B10023EF96 /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,11 +174,13 @@
 		0324D6892BAACB6900DEF36F /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				E193981E2CF3E7B10023EF96 /* Memory.swift */,
 				0324D6802BAACB6900DEF36F /* App.swift */,
 				0324D6812BAACB6900DEF36F /* ContentView.swift */,
 				0324D6822BAACB6900DEF36F /* LogManager.swift */,
 				0324D6832BAACB6900DEF36F /* LogView.swift */,
 				0324D6842BAACB6900DEF36F /* Message.swift */,
+				E193981A2CF3E5710023EF96 /* CSVReader.swift */,
 				0324D6852BAACB6900DEF36F /* MessageListView.swift */,
 				0324D6862BAACB6900DEF36F /* MessageView.swift */,
 				0324D6872BAACB6900DEF36F /* ResourceManager.swift */,
@@ -230,6 +238,7 @@
 		032C01662AC228E5002955E1 = {
 			isa = PBXGroup;
 			children = (
+				E193981C2CF3E5DE0023EF96 /* dataset.csv */,
 				0324D68A2BAACB6900DEF36F /* LLaMA */,
 				0324D6952BAACB7000DEF36F /* LLaMAAssets */,
 				035A5E952BB4B523001E0553 /* LLaMAEntitlements */,
@@ -418,6 +427,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0324D6962BAACB7000DEF36F /* Assets.xcassets in Resources */,
+				E193981D2CF3E5DE0023EF96 /* dataset.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,6 +467,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E193981F2CF3E7B50023EF96 /* Memory.swift in Sources */,
 				0324D6932BAACB6900DEF36F /* ResourceMonitor.swift in Sources */,
 				0324D68D2BAACB6900DEF36F /* LogManager.swift in Sources */,
 				0324D68E2BAACB6900DEF36F /* LogView.swift in Sources */,
@@ -464,6 +475,7 @@
 				0324D6922BAACB6900DEF36F /* ResourceManager.swift in Sources */,
 				0324D68C2BAACB6900DEF36F /* ContentView.swift in Sources */,
 				0324D6902BAACB6900DEF36F /* MessageListView.swift in Sources */,
+				E193981B2CF3E5710023EF96 /* CSVReader.swift in Sources */,
 				26A6A4282C8A3769005A761E /* ImagePicker.swift in Sources */,
 				0324D6912BAACB6900DEF36F /* MessageView.swift in Sources */,
 				0324D68B2BAACB6900DEF36F /* App.swift in Sources */,
@@ -680,7 +692,7 @@
 					"-force_load",
 					"$(BUILT_PRODUCTS_DIR)/libbackend_mps-simulator-debug.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.pytorch.executorch.illama278373732732793;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pytorch.executorch.illamadwdwwdwd;
 				PRODUCT_NAME = "$(PROJECT_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -742,7 +754,7 @@
 					"-force_load",
 					"$(BUILT_PRODUCTS_DIR)/libbackend_mps-simulator-release.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.pytorch.executorch.illama278373732732793;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pytorch.executorch.illamadwdwwdwd;
 				PRODUCT_NAME = "$(PROJECT_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

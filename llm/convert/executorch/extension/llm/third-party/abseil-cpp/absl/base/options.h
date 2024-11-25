@@ -235,10 +235,7 @@
 //
 // A value of 0 means that "hardened" mode is not enabled.
 //
-// A value of 1 means that "hardened" mode is enabled with all checks.
-//
-// A value of 2 means that "hardened" mode is partially enabled, with
-// only a subset of checks chosen to minimize performance impact.
+// A value of 1 means that "hardened" mode is enabled.
 //
 // Hardened builds have additional security checks enabled when `NDEBUG` is
 // defined. Defining `NDEBUG` is normally used to turn `assert()` macro into a
