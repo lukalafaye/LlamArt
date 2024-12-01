@@ -28,5 +28,5 @@ Llam4rt recognizes artworks using the video feed. Once the user has selected som
 
 Refer to [tgenlis83/llam4rt-llm/](https://github.com/tgenlis83/llam4rt-llm/) for more information.
 
-
+https://github.com/user-attachments/assets/fb16baa4-26bd-4258-8c2e-43000d5efc17
 
