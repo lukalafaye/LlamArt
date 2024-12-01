@@ -4,8 +4,7 @@ Llam4rt recognizes artworks using the video feed. Once the user has selected som
 
 # iOS App
 
-Made with love by Martin Mohammed
-https://github.com/MartinMohammed
+Made with love by [Martin Mohammed](https://github.com/MartinMohammed): [Link](https://github.com/lukalafaye/LlamArt/tree/main/ios-app)
 
 # Yolo
 
